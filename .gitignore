@@ -1,0 +1,48 @@
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+secrets/
+**/secrets/
+credentials/
+**/credentials/
+*_credentials.json
+*_service_account.json
+service-account*.json
+google-services.json
+GoogleService-Info.plist
+
+# Local agent and cloud credentials/configuration
+.aws/
+.codex/
+.agents/
+
+# Local databases, dumps, generated data, and notebook outputs
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+data/seeds/**
+!data/seeds/.gitkeep
+data/notebooks/**/*.ipynb_checkpoints/
+data/notebooks/**/output/
+data/notebooks/**/outputs/
+
+# Build and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+build/
+.DS_Store
