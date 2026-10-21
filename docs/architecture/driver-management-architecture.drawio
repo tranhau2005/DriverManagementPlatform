@@ -1,0 +1,115 @@
+<mxfile host="65bd71144e">
+    <diagram id="driver-platform" name="System Architecture">
+        <mxGraphModel dx="610" dy="988" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1160" math="0" shadow="0" adaptiveColors="auto">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=24;fontStyle=1;fontColor=#1E293B;" value="DRIVER MANAGEMENT PLATFORM ARCHITECTURE" vertex="1">
+                    <mxGeometry height="40" width="1200" x="40" y="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="subtitle" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#64748B;" value="Proposed design · Sources → Ingestion → Operational → Processing → Data Lake → Analytics" vertex="1">
+                    <mxGeometry height="24" width="1200" x="40" y="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="sources" parent="1" style="swimlane;startSize=34;horizontal=1;rounded=1;arcSize=8;container=1;collapsible=0;whiteSpace=wrap;html=1;fillColor=#EFF6FF;swimlaneFillColor=#F8FBFF;strokeColor=#93C5FD;fontColor=#1E40AF;fontStyle=1;fontSize=15;align=left;spacingLeft=14;" value="SOURCES · CLIENT APPLICATIONS" vertex="1">
+                    <mxGeometry height="125" width="1510" x="40" y="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin" parent="sources" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#60A5FA;fontColor=#1E3A8A;fontSize=15;" value="React Web&#xa;Admin" vertex="1">
+                    <mxGeometry height="58" width="220" x="330" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="driver" parent="sources" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#60A5FA;fontColor=#1E3A8A;fontSize=15;" value="React Native&#xa;Driver" vertex="1">
+                    <mxGeometry height="58" width="220" x="940" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="ingestion" parent="1" style="swimlane;startSize=34;horizontal=1;rounded=1;arcSize=8;container=1;collapsible=0;whiteSpace=wrap;html=1;fillColor=#F0FDF4;swimlaneFillColor=#F9FEFA;strokeColor=#86EFAC;fontColor=#166534;fontStyle=1;fontSize=15;align=left;spacingLeft=14;" value="INGESTION &amp; OPERATIONAL SERVICES" vertex="1">
+                    <mxGeometry height="250" width="1510" x="60" y="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="api" parent="ingestion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#4ADE80;fontColor=#14532D;fontSize=15;fontStyle=1;" value="FastAPI API&#xa;Auth · Driver · Leave&#xa;Attendance · Payroll" vertex="1">
+                    <mxGeometry height="100" width="280" x="80" y="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="postgres" parent="ingestion" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#DCEBFA;strokeColor=#60A5FA;fontColor=#1E3A8A;fontSize=15;" value="PostgreSQL&#xa;Operational data + outbox" vertex="1">
+                    <mxGeometry height="94" width="220" x="475" y="83" as="geometry"/>
+                </mxCell>
+                <mxCell id="publisher" parent="ingestion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#FBBF24;fontColor=#78350F;fontSize=15;" value="Outbox Publisher&#xa;Reads pending events" vertex="1">
+                    <mxGeometry height="90" width="220" x="815" y="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="kafka" parent="ingestion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE2E2;strokeColor=#F87171;fontColor=#7F1D1D;fontSize=15;fontStyle=1;" value="Apache Kafka&#xa;Event topics" vertex="1">
+                    <mxGeometry height="90" width="220" x="1165" y="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="ingest_note" parent="ingestion" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontColor=#475569;" value="One transaction writes operational data and the outbox · Publisher sends events asynchronously" vertex="1">
+                    <mxGeometry height="24" width="760" x="410" y="197" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_api_pg" edge="1" parent="ingestion" source="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="postgres" value="SQL + outbox">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_pg_pub" edge="1" parent="ingestion" source="postgres" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="publisher" value="Read outbox">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_pub_kafka" edge="1" parent="ingestion" source="publisher" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="kafka" value="Publish">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="processing" parent="1" style="swimlane;startSize=34;horizontal=1;rounded=1;arcSize=8;container=1;collapsible=0;whiteSpace=wrap;html=1;fillColor=#FFF7ED;swimlaneFillColor=#FFFBF6;strokeColor=#FDBA74;fontColor=#9A3412;fontStyle=1;fontSize=15;align=left;spacingLeft=14;" value="PROCESSING · EVENT HANDLING" vertex="1">
+                    <mxGeometry height="155" width="1510" x="40" y="535" as="geometry"/>
+                </mxCell>
+                <mxCell id="consumer" parent="processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEDD5;strokeColor=#FB923C;fontColor=#9A3412;fontSize=15;" value="Event Consumer&#xa;Stores raw events" vertex="1">
+                    <mxGeometry height="70" width="220" x="820" y="58" as="geometry"/>
+                </mxCell>
+                <mxCell id="spark" parent="processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEDD5;strokeColor=#FB923C;fontColor=#9A3412;fontSize=15;" value="Spark / PySpark&#xa;Cleans and aggregates" vertex="1">
+                    <mxGeometry height="70" width="220" x="1165" y="58" as="geometry"/>
+                </mxCell>
+                <mxCell id="lake" parent="1" style="swimlane;startSize=34;horizontal=1;rounded=1;arcSize=8;container=1;collapsible=0;whiteSpace=wrap;html=1;fillColor=#F5F3FF;swimlaneFillColor=#FAF9FF;strokeColor=#C4B5FD;fontColor=#5B21B6;fontStyle=1;fontSize=15;align=left;spacingLeft=14;" value="DATA LAKE · MINIO" vertex="1">
+                    <mxGeometry height="155" width="1510" x="40" y="725" as="geometry"/>
+                </mxCell>
+                <mxCell id="bronze" parent="lake" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#FDE68A;strokeColor=#D97706;fontColor=#78350F;fontSize=15;fontStyle=1;" value="BRONZE&#xa;Raw events" vertex="1">
+                    <mxGeometry height="75" width="170" x="740" y="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="silver" parent="lake" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#E2E8F0;strokeColor=#64748B;fontColor=#334155;fontSize=15;fontStyle=1;" value="SILVER&#xa;Cleaned data" vertex="1">
+                    <mxGeometry height="75" width="170" x="1035" y="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="gold" parent="lake" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#FEF08A;strokeColor=#CA8A04;fontColor=#713F12;fontSize=15;fontStyle=1;" value="GOLD&#xa;Metrics and data marts" vertex="1">
+                    <mxGeometry height="75" width="170" x="1320" y="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_silver_gold" edge="1" parent="lake" source="silver" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="gold" value="Aggregate">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="analytics" parent="1" style="swimlane;startSize=34;horizontal=1;rounded=1;arcSize=8;container=1;collapsible=0;whiteSpace=wrap;html=1;fillColor=#F0FDFA;swimlaneFillColor=#F8FFFD;strokeColor=#5EEAD4;fontColor=#115E59;fontStyle=1;fontSize=15;align=left;spacingLeft=14;" value="ANALYTICS · REPORTING" vertex="1">
+                    <mxGeometry height="155" width="1510" x="40" y="915" as="geometry"/>
+                </mxCell>
+                <mxCell id="trino" parent="analytics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCFBF1;strokeColor=#2DD4BF;fontColor=#115E59;fontSize=15;" value="Trino&#xa;SQL queries on Gold" vertex="1">
+                    <mxGeometry height="72" width="220" x="1020" y="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="superset" parent="analytics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CCFBF1;strokeColor=#2DD4BF;fontColor=#115E59;fontSize=15;fontStyle=1;" value="Apache Superset&#xa;Dashboard" vertex="1">
+                    <mxGeometry height="72" width="200" x="1290" y="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_trino_superset" edge="1" parent="analytics" source="trino" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="superset" value="Dataset">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_admin_api" edge="1" parent="1" source="admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="api" value="HTTPS / REST">
+                    <mxGeometry relative="1" x="0.0278" y="-25" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="490" y="275"/>
+                            <mxPoint x="280" y="275"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_driver_api" edge="1" parent="1" source="driver" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="api" value="HTTPS / REST">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_kafka_consumer" edge="1" parent="1" source="kafka" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="consumer" value="Consume">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_kafka_spark" edge="1" parent="1" source="kafka" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="spark" value="Stream">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_consumer_bronze" edge="1" parent="1" source="consumer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="bronze" value="Raw">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_spark_silver" edge="1" parent="1" source="spark" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="silver" value="Transform">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_gold_trino" edge="1" parent="1" source="gold" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;strokeColor=#475569;strokeWidth=2;fontColor=#475569;fontSize=12;" target="trino" value="SQL">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

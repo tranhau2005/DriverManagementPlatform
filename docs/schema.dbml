@@ -1,0 +1,228 @@
+// Canonical schema for DriverManagementPlatform.
+// Source of truth. Mirror of kiro-system-architecture-handoff.md Section 14.
+// Do NOT rename tables, columns, roles, or statuses. Propose changes via Alembic migration + comment.
+
+Project driver_management_approval {
+  database_type: 'PostgreSQL'
+  Note: 'Current ERD design in bao-cao.tex. Customers and bookings were added; there is no team leader or driver-team table.'
+}
+
+Table accounts {
+  id bigint [pk, increment]
+  driver_id bigint [unique, null]
+  customer_id bigint [unique, null]
+  role varchar(20) [not null, note: 'ADMIN, DRIVER, or CUSTOMER']
+  username varchar(100) [not null, unique]
+  password_hash text [not null]
+  status varchar(20) [not null, note: 'ACTIVE, LOCKED, or DISABLED']
+  created_at timestamptz [not null]
+}
+
+Table areas {
+  id bigint [pk, increment]
+  code varchar(20) [not null, unique]
+  name varchar(100) [not null]
+}
+
+Table drivers {
+  id bigint [pk, increment]
+  driver_code varchar(20) [not null, unique]
+  full_name varchar(150) [not null]
+  date_of_birth date [not null]
+  phone varchar(20) [not null]
+  email varchar(254)
+  address text [not null]
+  citizen_id varchar(20) [not null, unique]
+  education_level varchar(50) [not null]
+  area_id bigint [not null]
+  start_date date [not null]
+  emergency_contact varchar(255)
+  created_at timestamptz [not null]
+  archived_at timestamptz
+}
+
+Table employment_history {
+  id bigint [pk, increment]
+  driver_id bigint [not null]
+  status varchar(20) [not null, note: 'WORKING, ON_LEAVE, SICK, LONG_LEAVE, SUSPENDED, RESIGNED']
+  valid_from timestamptz [not null]
+  valid_to timestamptz
+  source_request_id bigint
+  changed_by bigint [not null]
+  reason text [not null]
+}
+
+Table driver_licenses {
+  id bigint [pk, increment]
+  driver_id bigint [not null]
+  license_number varchar(30) [not null, unique]
+  license_class varchar(20) [not null]
+  issued_on date [not null]
+  expires_on date
+}
+
+Table vehicles {
+  id bigint [pk, increment]
+  plate_number varchar(20) [not null, unique]
+  vehicle_type varchar(20) [not null, note: 'MOTORBIKE or CAR']
+  brand_model varchar(100)
+}
+
+Table driver_vehicles {
+  id bigint [pk, increment]
+  driver_id bigint [not null]
+  vehicle_id bigint [not null]
+  valid_from timestamptz [not null]
+  valid_to timestamptz
+}
+
+Table customers {
+  id bigint [pk, increment]
+  full_name varchar(150) [not null]
+  phone varchar(20) [not null, unique]
+  email varchar(254)
+  created_at timestamptz [not null]
+  archived_at timestamptz
+}
+
+Table bookings {
+  id bigint [pk, increment]
+  booking_code varchar(24) [not null, unique]
+  customer_id bigint [not null]
+  driver_id bigint
+  pickup_address text [not null]
+  dropoff_address text [not null]
+  requested_at timestamptz [not null]
+  scheduled_at timestamptz
+  completed_at timestamptz
+  fare_amount numeric(14,0)
+  status varchar(20) [not null, note: 'PENDING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED']
+  cancelled_at timestamptz
+}
+
+Table leave_requests {
+  id bigint [pk, increment]
+  driver_id bigint [not null]
+  request_type varchar(20) [not null, note: 'ANNUAL, SICK, LONG, SUSPEND, or RESIGN']
+  start_date date [not null]
+  end_date date
+  reason text [not null]
+  status varchar(20) [not null, note: 'PENDING, APPROVED, or REJECTED']
+  submitted_at timestamptz [not null]
+  decided_by bigint
+  decided_at timestamptz
+  rejection_reason text
+}
+
+Table leave_actions {
+  id bigint [pk, increment]
+  request_id bigint [not null]
+  actor_id bigint [not null]
+  action varchar(30) [not null, note: 'SUBMIT, APPROVE, or REJECT']
+  acted_at timestamptz [not null]
+  comment text
+}
+
+Table work_schedule {
+  id bigint [pk, increment]
+  driver_id bigint [not null]
+  work_date date [not null]
+  planned_minutes int [not null]
+  created_by bigint [not null]
+
+  Indexes {
+    (driver_id, work_date) [unique]
+  }
+}
+
+Table activity_sessions {
+  id bigint [pk, increment]
+  driver_id bigint [not null]
+  work_date date [not null]
+  started_at timestamptz [not null]
+  ended_at timestamptz
+  source_key varchar(100) [not null, unique]
+}
+
+Table income_policies {
+  id bigint [pk, increment]
+  driver_id bigint [not null]
+  month date [not null, note: 'Always the first day of the month']
+  base_amount numeric(14,0) [not null, note: 'Monthly base salary']
+  trip_rate numeric(14,0) [not null, note: 'Payment per completed booking']
+  created_by bigint [not null]
+
+  Indexes {
+    (driver_id, month) [unique]
+  }
+}
+
+Table payroll_periods {
+  id bigint [pk, increment]
+  month date [not null, unique, note: 'Always the first day of the month']
+  status varchar(20) [not null, note: 'DRAFT or FINALIZED']
+  created_by bigint [not null]
+  created_at timestamptz [not null]
+  finalized_by bigint
+  finalized_at timestamptz
+}
+
+Table payrolls {
+  id bigint [pk, increment]
+  period_id bigint [not null]
+  driver_id bigint [not null]
+  policy_id bigint [not null, unique]
+  driver_code_snapshot varchar(20) [not null]
+  driver_name_snapshot varchar(150) [not null]
+  completed_bookings int [not null]
+  base_amount numeric(14,0) [not null]
+  trip_rate numeric(14,0) [not null]
+  trip_amount numeric(14,0) [not null]
+  bonus_amount numeric(14,0) [not null]
+  allowance_amount numeric(14,0) [not null]
+  deduction_amount numeric(14,0) [not null]
+  net_amount numeric(14,0) [not null]
+  calculated_at timestamptz [not null]
+
+  Indexes {
+    (period_id, driver_id) [unique]
+  }
+}
+
+Table payroll_adjustments {
+  id bigint [pk, increment]
+  payroll_id bigint [not null]
+  adjustment_type varchar(20) [not null, note: 'BONUS, ALLOWANCE, or DEDUCTION']
+  description text [not null]
+  amount numeric(14,0) [not null]
+  created_by bigint [not null]
+  created_at timestamptz [not null]
+}
+
+Ref: accounts.driver_id - drivers.id
+Ref: accounts.customer_id - customers.id
+Ref: drivers.area_id > areas.id
+Ref: employment_history.driver_id > drivers.id
+Ref: employment_history.source_request_id > leave_requests.id
+Ref: employment_history.changed_by > accounts.id
+Ref: driver_licenses.driver_id > drivers.id
+Ref: driver_vehicles.driver_id > drivers.id
+Ref: driver_vehicles.vehicle_id > vehicles.id
+Ref: bookings.customer_id > customers.id
+Ref: bookings.driver_id > drivers.id
+Ref: leave_requests.driver_id > drivers.id
+Ref: leave_requests.decided_by > accounts.id
+Ref: leave_actions.request_id > leave_requests.id
+Ref: leave_actions.actor_id > accounts.id
+Ref: work_schedule.driver_id > drivers.id
+Ref: work_schedule.created_by > accounts.id
+Ref: activity_sessions.driver_id > drivers.id
+Ref: income_policies.driver_id > drivers.id
+Ref: income_policies.created_by > accounts.id
+Ref: payroll_periods.created_by > accounts.id
+Ref: payroll_periods.finalized_by > accounts.id
+Ref: payrolls.period_id > payroll_periods.id
+Ref: payrolls.driver_id > drivers.id
+Ref: payrolls.policy_id > income_policies.id
+Ref: payroll_adjustments.payroll_id > payrolls.id
+Ref: payroll_adjustments.created_by > accounts.id

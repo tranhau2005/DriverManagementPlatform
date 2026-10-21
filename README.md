@@ -1,17 +1,23 @@
 # DriverManagementPlatform
 
-Monorepo khởi tạo cho nền tảng quản lý tài xế. Cấu trúc hiện tại là bộ khung thư mục; frontend, backend và hạ tầng sẽ được bổ sung theo từng giai đoạn.
+Starter monorepo for a driver management platform. The current repository contains only the initial directory scaffold; the frontend, backend, and infrastructure will be added incrementally.
 
-Xem [AGENTS.md](AGENTS.md) để biết cấu trúc, ranh giới module và quy ước đóng góp.
+See [AGENTS.md](AGENTS.md) for the project structure, module boundaries, and contribution conventions.
 
-## Thành phần dự kiến
+Target architecture and draw.io diagram: [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md).
+
+## Planned components
 
 - `apps/web`: React web app
 - `apps/mobile`: React Native mobile app
-- `services/api`: FastAPI backend, chia theo domain
-- `services/agent-orchestrator`: điều phối agent và workflow
-- `services/event-consumer`: xử lý Kafka events
-- `services/data-processing`: xử lý dữ liệu
-- `infra/`: Docker, Kafka, database và monitoring
+- `services/api`: domain-oriented FastAPI backend
+- `services/agent-orchestrator`: agent orchestration and workflows
+- `services/event-consumer`: Kafka event processing
+- `services/data-processing`: data processing
+- `infra/`: Docker, Kafka, database, and monitoring
 
-Chưa có lệnh build/test cho đến khi các ứng dụng và cấu hình tương ứng được khởi tạo.
+Build and test commands will be added once the applications and their configuration are initialized.
+
+## Agent orchestrator
+
+A local Python dispatcher for Codex, Antigravity (`agy`), and OpenCode is available at [services/agent-orchestrator](services/agent-orchestrator/README.md). It requires the relevant CLI to be installed and authenticated separately. OpenRouter can be used through OpenCode's provider configuration.
