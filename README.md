@@ -17,4 +17,23 @@ DriverManagementPlatform is maintained as a set of independently versioned repos
 
 The former `packages/ui` and `packages/api-client` paths live in dmp-web because they are frontend-facing shared packages and there is no separate cross-platform package host yet. Specs and shared contracts live in dmp-docs. Each new repository retains the history for its paths from the original repository.
 
-Clone repositories side by side when working locally. For example, dmp-api's development instructions start PostgreSQL using the Compose file in `../dmp-infra`. See each repository's `CLAUDE.md` and `AGENTS.md` for scoped contribution conventions. Cross-repository contract changes should be coordinated with affected repositories and documented in dmp-docs.
+## Engineering guide
+
+The authoritative engineering guide is [docs/agent-guide.md in dmp-docs](https://github.com/tranhau2005/dmp-docs/blob/main/docs/agent-guide.md). It lives in dmp-docs and covers the pinned stack, migration integrity rules, the MVP slice (M1–M5), NEEDS-OWNER rules, and the decision log.
+
+## Local setup
+
+Clone all repositories side by side in one parent directory:
+
+```bash
+mkdir dmp && cd dmp
+for r in api web mobile agent-orchestrator event-consumer data-processing infra docs; do
+  gh repo clone tranhau2005/dmp-$r
+done
+```
+
+Keep the side-by-side layout: dmp-infra's Compose file expects dmp-api at `../dmp-api`, and dmp-api's development instructions start PostgreSQL using the Compose file in `../dmp-infra`.
+
+## Contributing
+
+See each repository's `CLAUDE.md` and `AGENTS.md` for scoped contribution conventions. Cross-repository contract changes should be coordinated with affected repositories and documented in dmp-docs.
