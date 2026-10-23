@@ -1,46 +1,25 @@
-# Instructions for AI Agents and Contributors
+# DriverManagementPlatform umbrella repository
 
-## Project overview
+This repository is the directory and coordination point for the independently versioned DriverManagementPlatform repositories. Application, infrastructure, documentation, data, and contract sources live in the repositories listed below.
 
-DriverManagementPlatform is a monorepo for a driver management platform. The planned stack includes React for web, React Native for mobile, Python/FastAPI for the backend, Docker for running services, and Kafka for event streaming. This repository currently contains only the initial directory scaffold. Check the actual configuration before running commands or assuming a technology has been installed.
+- [dmp-api](https://github.com/tranhau2005/dmp-api): FastAPI backend.
+- [dmp-web](https://github.com/tranhau2005/dmp-web): web app and shared UI/API client packages.
+- [dmp-mobile](https://github.com/tranhau2005/dmp-mobile): mobile app.
+- [dmp-agent-orchestrator](https://github.com/tranhau2005/dmp-agent-orchestrator): agent orchestration.
+- [dmp-event-consumer](https://github.com/tranhau2005/dmp-event-consumer): Kafka consumers.
+- [dmp-data-processing](https://github.com/tranhau2005/dmp-data-processing): data jobs and pipelines.
+- [dmp-infra](https://github.com/tranhau2005/dmp-infra): infrastructure and operational scripts.
+- [dmp-docs](https://github.com/tranhau2005/dmp-docs): specifications, schemas, architecture, and shared contracts.
 
-## Main structure
+Use each repository's own `AGENTS.md` and `CLAUDE.md` for implementation guidance. Coordinate cross-repository changes through the affected maintainers and keep interface contracts in dmp-docs aligned. Keep secrets, local environment files, generated data, and real personal data out of commits. Do not use this umbrella repository as a substitute for component-level source control.
 
-- `apps/web`: React application for browsers.
-- `apps/mobile`: React Native application.
-- `packages/`: code shared by applications, such as UI components, the API client, and contracts.
-- `services/api`: FastAPI API. Each domain under `app/domains/<domain>/` contains `repositories`, `services`, `routers`, `schemas`, and `models`.
-- `services/agent-orchestrator`: agent orchestration, workflows, and tools.
-- `services/event-consumer`: Kafka consumers and event handlers.
-- `services/data-processing`: data processing jobs and pipelines.
-- `data/`: schemas, pipeline definitions, seed data, and notebooks. Do not store sensitive or generated data here.
-- `infra/`: Docker, Kafka, database, and monitoring configuration.
-- `docs/`: architecture, API, data, and architecture decision records (ADRs).
+## Authoritative engineering guide
 
-## Backend conventions
+The authoritative engineering guide is [docs/agent-guide.md in dmp-docs](https://github.com/tranhau2005/dmp-docs/blob/main/docs/agent-guide.md). It lives in dmp-docs and defines the pinned stack, migration integrity rules, the MVP slice (M1–M5), NEEDS-OWNER rules, and the decision log. Read it before changing code in any component repository.
 
-- Routers handle HTTP requests, validate input at the boundary, and call services. Avoid putting business logic in routers.
-- Use Pydantic schemas for API request and response data. Do not return ORM models directly as API responses.
-- Services contain business rules and coordinate work across repositories or infrastructure.
-- Repositories handle data queries and writes; they do not contain business rules.
-- Models contain ORM mappings. Keep database migrations with the service that owns the corresponding database.
-- Put infrastructure dependencies such as Kafka, databases, caches, and LLM integrations in `infrastructure` or dedicated adapters. Keep domain logic from depending directly on vendor frameworks.
-- Add new domains under `services/api/app/domains/` and keep each domain's components together.
+## Commit and branch conventions
 
-## Frontend and data conventions
+- Commits: Conventional Commits 1.0, `<type>[(<scope>)][!]: <description>`. Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. Imperative, lowercase description, no trailing period, header of 72 characters or fewer. Mark breaking changes with `!` or a `BREAKING CHANGE:` footer.
+- Branches: `<type>/<short-kebab-description>` using the same types (for example `feat/m2-schema-migrations`). Never commit directly to `main`; work through pull requests.
 
-- Each app owns its UI, navigation, and state. Put code in `packages/` only when it is genuinely shared.
-- Keep API and event contract changes consistent across the backend, frontend, and relevant schemas in `packages/contracts/` or `data/schemas/`.
-- Give Kafka topics and events clear names and versions. Do not put secrets in events or in the repository.
-
-## Change guidelines
-
-1. Read the README and the relevant component configuration before making changes.
-2. Keep changes within the requested scope; do not add dependencies or services unless needed.
-3. Do not commit secrets, tokens, real personal data, or environment files. If needed, provide an `.env.example` containing variable names and non-sensitive sample values only.
-4. Use clear names when adding directories or modules, and update documentation when the structure or architecture changes.
-5. Before finishing, report the files changed and the relevant verification commands. Run checks only when requested by the user or required by the project workflow.
-
-## Project commands
-
-No build, lint, or test commands are configured in this scaffold yet. When adding configuration for an app or service, update this section with the exact commands and the working directory for each.
+The full wording is in [CLAUDE.md](CLAUDE.md#commit-and-branch-conventions).

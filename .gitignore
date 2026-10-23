@@ -23,18 +23,14 @@ GoogleService-Info.plist
 .aws/
 .codex/
 .agents/
+.claude/settings.local.json
 
-# Local databases, dumps, generated data, and notebook outputs
+# Local databases and dumps
 *.sqlite
 *.sqlite3
 *.db
 *.dump
 *.sql.gz
-data/seeds/**
-!data/seeds/.gitkeep
-data/notebooks/**/*.ipynb_checkpoints/
-data/notebooks/**/output/
-data/notebooks/**/outputs/
 
 # Build and tool caches
 __pycache__/
@@ -45,4 +41,5 @@ __pycache__/
 node_modules/
 dist/
 build/
+.ipynb_checkpoints/
 .DS_Store
