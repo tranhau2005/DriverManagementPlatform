@@ -32,7 +32,7 @@ for r in api web mobile agent-orchestrator event-consumer data-processing infra 
 done
 ```
 
-Keep the side-by-side layout: dmp-infra's Compose file expects dmp-api at `../dmp-api`, and dmp-api's development instructions start PostgreSQL using the Compose file in `../dmp-infra`.
+Keep the side-by-side layout: dmp-api depends on dmp-infra at `../dmp-infra`, because dmp-api's development instructions start PostgreSQL with `docker compose -f ../dmp-infra/docker-compose.yml up -d db`. dmp-infra's Compose file does not currently build application images.
 
 ## Contributing
 
